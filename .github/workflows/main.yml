@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v1
-    - name: Display the path
+    - name: Build Kernel
       run: |
         chmod a+x ./build.sh
         ./build.sh
