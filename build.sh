@@ -52,7 +52,7 @@ Compiler :
 Compiler : 
 ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 Date : ""$(env TZ=Asia/Jakarta date)"""
-make  O=out $device_defconfig $THREAD
+make  O=out $(echo $device)_defconfig $THREAD
 make -j4 O=out
 
 cp $KERN_IMG $ZIP_DIR
