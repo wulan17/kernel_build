@@ -11,7 +11,7 @@ jobs:
     - name: Build Kernel
       run: |
         chmod a+x ./build.sh
-	chmod a+x ./log.sh
+        chmod a+x ./log.sh
         ./log.sh
       shell: bash
       env:
