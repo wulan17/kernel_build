@@ -1,31 +1,32 @@
-export TELEGRAM_TOKEN
-export TELEGRAM_CHAT
 sudo apt update
 sudo apt install -y liblz4-dev openjdk-8-jdk android-tools-adb bc bison build-essential curl flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev ccache
 
-# Main Environment
 # Export
+export TELEGRAM_TOKEN
+export TELEGRAM_CHAT
 export ARCH=arm
 export SUBARCH=arm
 export PATH=/usr/lib/ccache:$PATH
 export KBUILD_BUILD_USER=wulan17
 export KBUILD_BUILD_HOST=Github
-branch=pie
-device=cactus
-kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_cactus.git
-tc_repo=https://github.com/wulan17/prebuilts_gcc_linux-x86_arm-linux-androideabi-4.9.git
-tc_name=arm-linux-androideabi
-tc_v=4.9
-export zip_name="kernel-"$($device)"-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
-KERNEL_DIR=$(pwd)
-KERN_IMG=$KERNEL_DIR/kernel/out/arch/$ARCH/boot/zImage-dtb
-ZIP_DIR=$KERNEL_DIR/AnyKernel
-CONFIG_DIR=$KERNEL_DIR/kernel/arch/$ARCH/configs
-CORES=$(grep -c ^processor /proc/cpuinfo)
-THREAD="-j$CORES"
-CROSS_COMPILE+="ccache "
-CROSS_COMPILE+="$KERNEL_DIR/$tc_name-$tc_v/bin/$tc_name-"
+export branch=pie
+export device=cactus
+export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_cactus.git
+export tc_repo=https://github.com/wulan17/prebuilts_gcc_linux-x86_arm-linux-androideabi-4.9.git
+export tc_name=arm-linux-androideabi
+export tc_v=4.9
+export zip_name="kernel-"$device"-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
+export KERNEL_DIR=$(pwd)
+export KERN_IMG=$KERNEL_DIR/kernel/out/arch/$ARCH/boot/zImage-dtb
+export ZIP_DIR=$KERNEL_DIR/AnyKernel
+export CONFIG_DIR=$KERNEL_DIR/kernel/arch/$ARCH/configs
+export CORES=$(grep -c ^processor /proc/cpuinfo)
+export THREAD="-j$CORES"
+export CROSS_COMPILE+="ccache "
+export CROSS_COMPILE+="$KERNEL_DIR/$tc_name-$tc_v/bin/$tc_name-"
 export CROSS_COMPILE
+
+# Main Environment
 chmod a+x $KERNEL_DIR/telegram
 SYNC_START=$(date +"%s")
 $KERNEL_DIR/telegram -M "Sync Started"
