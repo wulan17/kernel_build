@@ -8,7 +8,6 @@ sudo apt install -y liblz4-dev openjdk-8-jdk android-tools-adb bc bison build-es
 export ARCH=arm
 export SUBARCH=arm
 export PATH=/usr/lib/ccache:$PATH
-export CROSS_COMPILE
 export KBUILD_BUILD_USER=wulan17
 export KBUILD_BUILD_HOST=Github
 branch=pie
@@ -19,14 +18,14 @@ tc_name=arm-linux-androideabi
 tc_v=4.9
 export zip_name="kernel-"$($device)"-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 KERNEL_DIR=$(pwd)
-KERN_IMG=$KERNEL_DIR/kernel/out/arch/arm/boot/zImage-dtb
+KERN_IMG=$KERNEL_DIR/kernel/out/arch/$ARCH/boot/zImage-dtb
 ZIP_DIR=$KERNEL_DIR/AnyKernel
-CONFIG_DIR=$KERNEL_DIR/kernel/arch/arm/configs
-CONFIG=$device_defconfig
+CONFIG_DIR=$KERNEL_DIR/kernel/arch/$ARCH/configs
 CORES=$(grep -c ^processor /proc/cpuinfo)
 THREAD="-j$CORES"
 CROSS_COMPILE+="ccache "
 CROSS_COMPILE+="$KERNEL_DIR/$tc_name-$tc_v/bin/$tc_name-"
+export CROSS_COMPILE
 chmod a+x $KERNEL_DIR/telegram
 SYNC_START=$(date +"%s")
 $KERNEL_DIR/telegram -M "Sync Started"
@@ -52,7 +51,7 @@ Compiler :
 Compiler : 
 ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 Date : ""$(env TZ=Asia/Jakarta date)"""
-make  O=out $CONFIG $THREAD
+make  O=out $device_defconfig $THREAD
 make -j4 O=out
 
 cp $KERN_IMG $ZIP_DIR
