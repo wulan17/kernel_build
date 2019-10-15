@@ -11,7 +11,7 @@ export KBUILD_BUILD_USER=wulan17
 export KBUILD_BUILD_HOST=Github
 export branch=pie
 export device=cactus
-export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_cactus.git
+export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_cactus-test.git
 export tc_repo=https://github.com/wulan17/prebuilts_gcc_linux-x86_arm-linux-androideabi-4.9.git
 export tc_name=arm-linux-androideabi
 export tc_v=4.9
@@ -41,12 +41,14 @@ $KERNEL_DIR/telegram -M "Sync completed successfully in $((SYNC_DIFF / 60)) minu
 
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
+export last_tag=$(git log -1 --oneline)
 $KERNEL_DIR/telegram -M "Build Start
 Dev : ""$KBUILD_BUILD_USER""
 Product : Kernel
 Device : #""$device""
 Branch : ""$branch""
 Host : ""$KBUILD_BUILD_HOST""
+Commit : ""$last_tag""
 Compiler : 
 ""$(gcc --version)""
 Compiler : 
@@ -68,6 +70,7 @@ Product : Kernel
 Device : #""$device""
 Branch : ""$branch""
 Host : ""$KBUILD_BUILD_HOST""
+Commit : ""$last_tag""
 Compiler : ""$(gcc --version)""
 Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
