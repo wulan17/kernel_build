@@ -13,9 +13,9 @@ export branch=lineage-16.0
 export device=cactus
 export LOCALVERSION="-wulan17"
 export kernel_repo=https://github.com/xiaomi-mt6765/android_kernel_xiaomi_mt6765.git
-export tc_repo=https://github.com/wulan17/prebuilts_gcc_linux-x86_arm-linux-androideabi-4.9.git
-export tc_name=arm-linux-androideabi
-export tc_v=4.9
+export tc_repo=https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git
+export tc_name=arm-linux-gnueabihf
+export tc_v=7.5
 export zip_name="kernel-"$device"-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
 export KERN_IMG=$KERNEL_DIR/kernel/out/arch/$ARCH/boot/zImage-dtb
@@ -33,9 +33,7 @@ SYNC_START=$(date +"%s")
 $KERNEL_DIR/telegram -M "Sync Started"
 cd $KERNEL_DIR && git clone -b $branch $kernel_repo --depth 1 kernel
 cd $KERNEL_DIR && git clone $tc_repo $tc_name-$tc_v
-chmod a+x $KERNEL_DIR/$tc_name-$tc_v/bin/*
-chmod a+x $KERNEL_DIR/$tc_name-$tc_v/libexec/gcc/$tc_name/*/*
-chmod a+x $KERNEL_DIR/$tc_name-$tc_v/libexec/gcc/$tc_name/*/plugin/*
+chmod -R a+x $KERNEL_DIR/$tc_name-$tc_v
 SYNC_END=$(date +"%s")
 SYNC_DIFF=$((SYNC_END - SYNC_START))
 $KERNEL_DIR/telegram -M "Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
