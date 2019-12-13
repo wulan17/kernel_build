@@ -9,10 +9,10 @@ export SUBARCH=arm
 export PATH=/usr/lib/ccache:$PATH
 export KBUILD_BUILD_USER=wulan17
 export KBUILD_BUILD_HOST=Github
-export branch=lineage-16.0
+export branch=pie
 export device=cactus
 export LOCALVERSION="-wulan17"
-export kernel_repo=https://github.com/xiaomi-mt6765/android_kernel_xiaomi_mt6765.git
+export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_cactus.git
 export tc_repo=https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git
 export tc_name=arm-linux-gnueabihf
 export tc_v=7.5
@@ -41,15 +41,13 @@ $KERNEL_DIR/telegram -M "Sync completed successfully in $((SYNC_DIFF / 60)) minu
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
 export last_tag=$(git log -1 --oneline)
-$KERNEL_DIR/telegram -M "Build Start
+$KERNEL_DIR/telegram -M "Build Started
 Dev : ""$KBUILD_BUILD_USER""
 Product : Kernel
 Device : #""$device""
 Branch : ""$branch""
 Host : ""$KBUILD_BUILD_HOST""
 Commit : ""$last_tag""
-Compiler : 
-""$(gcc --version)""
 Compiler : 
 ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 Date : ""$(env TZ=Asia/Jakarta date)"""
@@ -70,6 +68,5 @@ Device : #""$device""
 Branch : ""$branch""
 Host : ""$KBUILD_BUILD_HOST""
 Commit : ""$last_tag""
-Compiler : ""$(gcc --version)""
 Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
