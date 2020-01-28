@@ -28,15 +28,14 @@ export CROSS_COMPILE+="$KERNEL_DIR/$tc_name-$tc_v/bin/$tc_name-"
 export CROSS_COMPILE
 
 # Main Environment
-chmod a+x $KERNEL_DIR/telegram
 SYNC_START=$(date +"%s")
-curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started"
+curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 cd $KERNEL_DIR && git clone -b $branch $kernel_repo --depth 1 kernel
 cd $KERNEL_DIR && git clone $tc_repo $tc_name-$tc_v
 chmod -R a+x $KERNEL_DIR/$tc_name-$tc_v
 SYNC_END=$(date +"%s")
 SYNC_DIFF=$((SYNC_END - SYNC_START))
-curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
+curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
@@ -50,7 +49,7 @@ Host : ""$KBUILD_BUILD_HOST""
 Commit : ""$last_tag""
 Compiler : 
 ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
-Date : ""$(env TZ=Asia/Jakarta date)"""
+Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 make  O=out $(echo $device)_defconfig $THREAD
 make -j4 O=out
 BUILD_END=$(date +"%s")
