@@ -53,20 +53,23 @@ Compiler :
 Date : ""$(env TZ=Asia/Jakarta date)"""
 make  O=out $(echo $device)_defconfig $THREAD
 make -j4 O=out
+if [ -e $KERN_IMG]; then
+	cp $KERN_IMG $ZIP_DIR
+	cd $ZIP_DIR
+	mv zImage-dtb zImage
+	BUILD_END=$(date +"%s")
+	BUILD_DIFF=$((BUILD_END - BUILD_START))
+	zip -r $zip_name.zip ./*
 
-cp $KERN_IMG $ZIP_DIR
-cd $ZIP_DIR
-mv zImage-dtb zImage
-BUILD_END=$(date +"%s")
-BUILD_DIFF=$((BUILD_END - BUILD_START))
-zip -r $zip_name.zip ./*
-
-curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@$ZIP_DIR/$zip_name.zip -F "parse_mode=html" -F caption="Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
-Dev : ""$KBUILD_BUILD_USER""
-Product : Kernel
-Device : #""$device""
-Branch : ""$branch""
-Host : ""$KBUILD_BUILD_HOST""
-Commit : ""$last_tag""
-Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
-Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
+	curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@$ZIP_DIR/$zip_name.zip -F "parse_mode=html" -F caption="Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
+	Dev : ""$KBUILD_BUILD_USER""
+	Product : Kernel
+	Device : #""$device""
+	Branch : ""$branch""
+	Host : ""$KBUILD_BUILD_HOST""
+	Commit : ""$last_tag""
+	Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
+	Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
+else
+	curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build failed in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
+fi
