@@ -30,18 +30,18 @@ export CROSS_COMPILE
 # Main Environment
 chmod a+x $KERNEL_DIR/telegram
 SYNC_START=$(date +"%s")
-$KERNEL_DIR/telegram -M "Sync Started"
+curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started"
 cd $KERNEL_DIR && git clone -b $branch $kernel_repo --depth 1 kernel
 cd $KERNEL_DIR && git clone $tc_repo $tc_name-$tc_v
 chmod -R a+x $KERNEL_DIR/$tc_name-$tc_v
 SYNC_END=$(date +"%s")
 SYNC_DIFF=$((SYNC_END - SYNC_START))
-$KERNEL_DIR/telegram -M "Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
+curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds"
 
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
 export last_tag=$(git log -1 --oneline)
-$KERNEL_DIR/telegram -M "Build Started
+curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started
 Dev : ""$KBUILD_BUILD_USER""
 Product : Kernel
 Device : #""$device""
@@ -55,7 +55,7 @@ make  O=out $(echo $device)_defconfig $THREAD
 make -j4 O=out
 BUILD_END=$(date +"%s")
 BUILD_DIFF=$((BUILD_END - BUILD_START))
-if [ -e "$KERN_IMG"]; then
+if [ -e "$KERN_IMG" ]; then
 	cp $KERN_IMG $ZIP_DIR
 	cd $ZIP_DIR
 	mv zImage-dtb zImage
