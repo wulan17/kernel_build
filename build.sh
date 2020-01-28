@@ -53,12 +53,12 @@ Compiler :
 Date : ""$(env TZ=Asia/Jakarta date)"""
 make  O=out $(echo $device)_defconfig $THREAD
 make -j4 O=out
-if [ -e $KERN_IMG]; then
+BUILD_END=$(date +"%s")
+BUILD_DIFF=$((BUILD_END - BUILD_START))
+if [ -e "$KERN_IMG"]; then
 	cp $KERN_IMG $ZIP_DIR
 	cd $ZIP_DIR
 	mv zImage-dtb zImage
-	BUILD_END=$(date +"%s")
-	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	zip -r $zip_name.zip ./*
 
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@$ZIP_DIR/$zip_name.zip -F "parse_mode=html" -F caption="Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
