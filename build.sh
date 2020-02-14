@@ -1,5 +1,7 @@
-sudo apt update
-sudo apt install -y liblz4-dev openjdk-8-jdk android-tools-adb bc bison build-essential curl flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev ccache
+sudo apt update > /dev/null
+sudo apt install -y liblz4-dev openjdk-8-jdk android-tools-adb bc bison build-essential curl flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libesd0-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc yasm zip zlib1g-dev ccache > /dev/null
+
+sudo timedatectl set-timezone Asia/Jakarta
 
 # Export
 export TELEGRAM_TOKEN
@@ -9,14 +11,14 @@ export SUBARCH=arm
 export PATH=/usr/lib/ccache:$PATH
 export KBUILD_BUILD_USER=wulan17
 export KBUILD_BUILD_HOST=Github
-export branch=test_push
+export branch=staging/pie
 export device=cactus
 export LOCALVERSION="-wulan17"
 export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_mt6765.git
 export tc_repo=https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git
 export tc_name=arm-linux-gnueabihf
 export tc_v=7.5
-export zip_name="kernel-"$device"-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
+export zip_name="kernel-"$device"-EXPERIMENTAL-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
 export KERN_IMG=$KERNEL_DIR/kernel/out/arch/$ARCH/boot/zImage-dtb
 export ZIP_DIR=$KERNEL_DIR/AnyKernel
@@ -40,7 +42,8 @@ curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
 export last_tag=$(git log -1 --oneline)
-curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started
+curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="#EXPERIMENTAL
+Build Started
 Dev : ""$KBUILD_BUILD_USER""
 Product : Kernel
 Device : #""$device""
@@ -60,7 +63,8 @@ if [ -e "$KERN_IMG" ]; then
 	mv zImage-dtb zImage
 	zip -r $zip_name.zip ./*
 
-	curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@$ZIP_DIR/$zip_name.zip -F "parse_mode=html" -F caption="Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
+	curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@$ZIP_DIR/$zip_name.zip -F "parse_mode=html" -F caption="#EXPERIMENTAL
+	Build completed successfully in $((BUILD_DIFF / 60)) minute(s) and $((BUILD_DIFF % 60)) seconds
 	Dev : ""$KBUILD_BUILD_USER""
 	Product : Kernel
 	Device : #""$device""
