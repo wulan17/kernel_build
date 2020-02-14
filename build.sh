@@ -41,7 +41,7 @@ curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed
 
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
-export last_tag="<a href='"$kernel_repo"/commit"$(git log -1 --format=%h)"'>"$(git log -1 --format=%h)"</a> : "$(git log -1 --format=%s)
+export last_tag="<a href='"$kernel_repo"/commit/"$(git log -1 --format=%H)"'>"$(git log -1 --format=%h)"</a>: "$(git log -1 --format=%s)
 curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="#EXPERIMENTAL
 Build Started
 Dev : ""$KBUILD_BUILD_USER""
