@@ -14,7 +14,7 @@ export KBUILD_BUILD_HOST=Github
 export branch=staging/pie
 export device=cactus
 export LOCALVERSION="-wulan17"
-export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_mt6765.git
+export kernel_repo=https://github.com/wulan17/android_kernel_xiaomi_mt6765
 export tc_repo=https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git
 export tc_name=arm-linux-gnueabihf
 export tc_v=7.5
@@ -41,7 +41,7 @@ curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed
 
 BUILD_START=$(date +"%s")
 cd $KERNEL_DIR/kernel
-export last_tag=$(git log -1 --oneline)
+export last_tag="<a href='"$kernel_repo"/commit"$(git log -1 --format=%h)"'>"$(git log -1 --format=%h)"</a> : "$(git log -1 --format=%s)
 curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="#EXPERIMENTAL
 Build Started
 Dev : ""$KBUILD_BUILD_USER""
