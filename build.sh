@@ -8,7 +8,7 @@ export SUBARCH="arm"
 export PATH="/usr/lib/ccache:$PATH"
 export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
-export branch="pie"
+export branch="dev/pie"
 export device="cactus"
 export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/wulan17/android_kernel_xiaomi_mt6765.git"
@@ -49,6 +49,7 @@ function build(){
 }
 function success(){
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@"$ZIP_DIR"/"$zip_name".zip -F "parse_mode=html" -F caption="Build completed successfully in $((BUILD_DIFF / 60)):$((BUILD_DIFF % 60))
+	Build Type = EXPERIMENTAL
 	Dev : ""$KBUILD_BUILD_USER""
 	Product : Kernel
 	Device : #""$device""
@@ -57,7 +58,7 @@ function success(){
 	Commit : ""$last_tag""
 	Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 	Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
-	
+
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F document=@"$KERNEL_DIR"/kernel.log https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument > /dev/null
 	exit 0
 }
