@@ -12,9 +12,9 @@ export branch="dev/pie"
 export device="cactus"
 export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/wulan17/android_kernel_xiaomi_mt6765.git"
-export tc_repo="https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git"
-export tc_name="arm-linux-gnueabihf"
-export tc_v="7.5"
+export tc_repo="https://wulan17@bitbucket.org/wulan17/arm-none-linux-gnueabihf-9.2.git"
+export tc_name="arm-none-linux-gnueabihf"
+export tc_v="9.2"
 export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
 export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/zImage-dtb
