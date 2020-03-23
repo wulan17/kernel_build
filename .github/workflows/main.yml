@@ -10,8 +10,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build Kernel
       run: |
-        chmod a+x ./build.sh
-        ./build.sh
+        chmod a+x ./run.sh
+        ./run.sh
       shell: bash
       env:
         TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }} 
