@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update && sudo apt install ccache tar xz
+sudo apt update && sudo apt install ccache tar xz-utils
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT

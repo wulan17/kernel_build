@@ -4,7 +4,7 @@ function sync(){
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 	cd "$KERNEL_DIR" && git clone -b "$branch" "$kernel_repo" --depth 1 kernel
 	#cd "$KERNEL_DIR" && git clone "$tc_repo" "$tc_name"-"$tc_v"
-	cd "$KERNEL_DIR" && wget -O "$tc_name".tar.xz "$tc_url" && tar -xvJf "$tc_name".tar.xz
+	cd "$KERNEL_DIR" && wget -q -O "$tc_name".tar.xz "$tc_url" && tar -xvJf "$tc_name".tar.xz > /dev/null
 	chmod -R a+x "$KERNEL_DIR"/"$tc_fname"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
