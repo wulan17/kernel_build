@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update && sudo apt install ccache
+sudo apt update && sudo apt install ccache tar xz
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT
@@ -12,9 +12,11 @@ export branch="dev/pie"
 export device="cactus"
 export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/wulan17/android_kernel_xiaomi_mt6765.git"
-export tc_repo="https://wulan17@bitbucket.org/wulan17/arm-none-linux-gnueabihf-9.2.git"
+#export tc_repo="https://wulan17@bitbucket.org/wulan17/arm-none-linux-gnueabihf-9.2.git"
+export tc_url="https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf.tar.xz?revision=fed31ee5-2ed7-40c8-9e0e-474299a3c4ac&la=en&hash=76DAF56606E7CB66CC5B5B33D8FB90D9F24C9D20"
+export tc_fname="gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf"
 export tc_name="arm-none-linux-gnueabihf"
-export tc_v="9.2"
+#export tc_v="9.2"
 export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
 export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/zImage-dtb
@@ -23,15 +25,16 @@ export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
 export THREAD="-j$CORES"
 CROSS_COMPILE+="ccache "
-CROSS_COMPILE+="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name-"
+CROSS_COMPILE+="$KERNEL_DIR"/"$tc_fname"/bin/"$tc_name"-
 export CROSS_COMPILE
 
 function sync(){
 	SYNC_START=$(date +"%s")
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 	cd "$KERNEL_DIR" && git clone -b "$branch" "$kernel_repo" --depth 1 kernel
-	cd "$KERNEL_DIR" && git clone "$tc_repo" "$tc_name"-"$tc_v"
-	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
+	#cd "$KERNEL_DIR" && git clone "$tc_repo" "$tc_name"-"$tc_v"
+	cd "$KERNEL_DIR" && wget -O "$tc_name".tar.xz && tar -xvJf "$tc_name".tar.xz
+	chmod -R a+x "$KERNEL_DIR"/"$tc_fname"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync completed successfully in $((SYNC_DIFF / 60)) minute(s) and $((SYNC_DIFF % 60)) seconds" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage > /dev/null
