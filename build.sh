@@ -3,34 +3,36 @@ sudo apt update && sudo apt install ccache
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT
-export ARCH="arm"
-export SUBARCH="arm"
+export sticker="CAACAgUAAxkBAAIL2l6XZzZMONmyzN78ZXKauBmF7B59AAIIAQACai2MM14xGHW1mrNAGAQ" 
+export ARCH="arm64"
+export SUBARCH="arm64"
 export PATH="/usr/lib/ccache:$PATH"
 export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
-export branch="ten"
-export device="cactus"
+export branch="pie"
+export device="trinket-perf"
 export LOCALVERSION="-wulan17"
-export kernel_repo="https://github.com/wulan17/android_kernel_xiaomi_mt6765.git"
-export tc_repo="https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git"
-export tc_name="arm-linux-gnueabihf"
-export tc_v="7.5"
+export kernel_repo="https://github.com/wulan17/android_kernel_realme_rmx2030.git"
+export tc_repo="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
+export tc_name="aarch64-linux-android"
+export tc_branch="android-9.0.0_r34"
+export tc_v="4.9"
 export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
-export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/zImage-dtb
+export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/Image.gz-dtb
 export ZIP_DIR="$KERNEL_DIR"/AnyKernel
 export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
 export THREAD="-j$CORES"
-CROSS_COMPILE+="ccache "
+CROSS_COMPILE="ccache "
 CROSS_COMPILE+="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name-"
 export CROSS_COMPILE
 
 function sync(){
 	SYNC_START=$(date +"%s")
 	curl -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
-	cd "$KERNEL_DIR" && git clone -b "$branch" "$kernel_repo" --depth 1 kernel
-	cd "$KERNEL_DIR" && git clone "$tc_repo" "$tc_name"-"$tc_v"
+	cd "$KERNEL_DIR" && git clone "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel
+	cd "$KERNEL_DIR" && git clone "$THREAD" -b "$tc_branch" "$tc_repo" "$tc_name"-"$tc_v"
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
@@ -67,9 +69,8 @@ function failed(){
 }
 function check_build(){
 	if [ -e "$KERN_IMG" ]; then
-		cp "$KERN_IMG" "$ZIP_DIR"
+		cp "$KERN_IMG" "$ZIP_DIR"/zImage
 		cd "$ZIP_DIR"
-		mv zImage-dtb zImage
 		zip -r "$zip_name".zip ./*
 		success
 	else
@@ -77,6 +78,7 @@ function check_build(){
 	fi
 }
 function main(){
+	curl -F "chat_id=$chat" -F "sticker=$sticker" https://api.telegram.org/bot"$telegram"/sendSticker > /dev/null
 	sync
 	build
 	check_build
