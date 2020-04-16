@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update && sudo apt install ccache
+sudo apt update && sudo apt install ccache bc build-essential zip curl libstdc++6 git-core gnupg make automake autogen autoconf autotools-dev libtool shtool python m4 gcc libtool zlib1g-dev
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT
