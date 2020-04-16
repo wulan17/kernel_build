@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update && sudo apt install ccache bc build-essential zip curl -s libstdc++6 git-core gnupg make automake autogen autoconf autotools-dev libtool shtool python m4 gcc libtool zlib1g-dev
+sudo apt update && sudo apt install ccache
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT
@@ -24,7 +24,7 @@ export ZIP_DIR="$KERNEL_DIR"/AnyKernel
 export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
 export THREAD="-j$CORES"
-CROSS_COMPILE="ccache "
+CROSS_COMPILE+="ccache "
 CROSS_COMPILE+="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name-"
 export CROSS_COMPILE
 
