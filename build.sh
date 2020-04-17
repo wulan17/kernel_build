@@ -15,8 +15,13 @@ export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/wulan17/android_kernel_realme_rmx2030.git"
 export tc_repo="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
 export tc_name="aarch64-linux-android"
-export tc_branch="android-9.0.0_r34"
+export tc_branch="android-9.0.0_r55"
 export tc_v="4.9"
+export clang_repo="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/"
+export clang_branch="$tc_branch"
+export clang_v="clang-4691093"
+export clang_bin="clang-6.0"
+export clang_triple="aarch64-linux-gnu-"
 export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
 export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/Image.gz-dtb
@@ -33,6 +38,7 @@ function sync(){
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" "$tc_name"-"$tc_v" > /dev/null
+	cd "$KERNEL_DIR" && git clone --quite "$THREAD" -b "$clang_branch" "clang_repo" clang > /dev/null
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
@@ -43,7 +49,7 @@ function build(){
 	cd "$KERNEL_DIR"/kernel
 	export last_tag=$(git log -1 --oneline)
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage > /dev/null
-	script "$KERNEL_DIR"/kernel.log -c 'make O=out vendor/'"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' O=out'
+	script "$KERNEL_DIR"/kernel.log -c 'make O=out vendor/'"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC='"$KERNEL_DIR"'/clang/'"$clang_v"'/bin/'"$clang_bin"' CLANG_TRIPLE='"$clang_triple"' O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	export BUILD_DIFF
