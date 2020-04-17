@@ -40,7 +40,7 @@ function sync(){
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
 	#cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$clang_branch" "$clang_repo" clang > /dev/null
-	wget -q clang-4691093.tar.gz
+	wget -q "$clang_url"
 	tar -xzf clang-4691093.tar.gz
 	rm clang-4691093.tar.gz
 	mv clang-4691093 clang
