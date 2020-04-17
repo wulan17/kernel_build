@@ -20,7 +20,7 @@ export tc_v="4.9"
 export clang_repo="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/"
 export clang_branch="$tc_branch"
 export clang_v="clang-4691093"
-export clang_bin="clang-6.0"
+export clang_bin="clang"
 export clang_triple="aarch64-linux-gnu-"
 export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
