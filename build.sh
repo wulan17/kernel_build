@@ -13,14 +13,12 @@ export branch="pie"
 export device="trinket-perf"
 export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/wulan17/android_kernel_realme_rmx2030.git"
-export tc_repo="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9"
-export tc_name="aarch64-linux-android"
-export tc_branch="android-9.0.0_r55"
-export tc_v="4.9"
-#export clang_repo="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/"
-#export clang_branch="$tc_branch"
-#export clang_v="clang-4691093"
-#export clang_bin="clang"
+export tc_repo="https://github.com/wulan17/linaro_aarch64-linux-gnu-7.5.git"
+export tc_name="aarch64-linux-gnu"
+export tc32_repo="https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git"
+export tc32_name="arm-linux-gnueabihf"
+export tc_branch="master"
+export tc_v="7.5"
 export clang_url="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-9.0.0_r55/clang-4691093.tar.gz"
 export clang_triple="aarch64-linux-gnu-"
 export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
@@ -31,15 +29,18 @@ export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
 export THREAD="-j$CORES"
 CROSS_COMPILE+="ccache "
-CROSS_COMPILE+="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name-"
+CROSS_COMPILE+="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name"-
 export CROSS_COMPILE
+CROSS_COMPILE_ARM32+="ccache "
+CROSS_COMPILE_ARM32+="$KERNEL_DIR"/"$tc32_name"-"$tc_v"/bin/"$tc32_name"-
+export CROSS_COMPILE_ARM32
 
 function sync(){
 	SYNC_START=$(date +"%s")
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
-	#cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$clang_branch" "$clang_repo" clang > /dev/null
+	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc32_repo" --depth 1 "$tc32_name"-"$tc_v" > /dev/null
 	wget -q "$clang_url"
 	mkdir -p clang
 	cd clang && tar -xzf ../clang-4691093.tar.gz
