@@ -41,9 +41,9 @@ function sync(){
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
 	#cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$clang_branch" "$clang_repo" clang > /dev/null
 	wget -q "$clang_url"
-	tar -xzf clang-4691093.tar.gz
-	rm clang-4691093.tar.gz
-	mv clang-4691093 clang
+	mkdir -p clang
+	cd clang && tar -xzf ../clang-4691093.tar.gz
+	cd "$KERNEL_DIR" && rm clang-4691093.tar.gz
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
