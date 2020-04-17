@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt update && sudo apt install ccache wget
+sudo apt update && sudo apt install ccache wget bc build-essential make autoconf automake
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT
@@ -38,10 +38,11 @@ function sync(){
 	SYNC_START=$(date +"%s")
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
-	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" "$tc_name"-"$tc_v" > /dev/null
+	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
 	#cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$clang_branch" "$clang_repo" clang > /dev/null
 	wget -q clang-4691093.tar.gz
-	tar -xf clang-4691093.tar.gz
+	tar -xzf clang-4691093.tar.gz
+	rm clang-4691093.tar.gz
 	mv clang-4691093 clang
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
