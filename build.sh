@@ -81,7 +81,7 @@ function failed(){
 }
 function check_build(){
 	if [ -e "$KERN_IMG" ]; then
-		cp "$KERN_IMG" "$ZIP_DIR"/zImage
+		cp "$KERN_IMG" "$ZIP_DIR"/Image.gz
 		cd "$ZIP_DIR"
 		zip -r "$zip_name".zip ./*
 		success
