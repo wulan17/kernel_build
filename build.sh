@@ -57,7 +57,7 @@ function build(){
 	cd "$KERNEL_DIR"/kernel
 	export last_tag=$(git log -1 --oneline)
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage > /dev/null
-	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$codename"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- O=out'
+	script "$KERNEL_DIR"/kernel.log -c 'make O=out vendor/'"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	export BUILD_DIFF
