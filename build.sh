@@ -30,11 +30,12 @@ export THREAD="-j$CORES"
 #CROSS_COMPILE+="ccache "
 #CROSS_COMPILE+="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name"-
 #export CROSS_COMPILE
-CROSS_COMPILE_ARM32+="ccache "
-CROSS_COMPILE_ARM32+="$KERNEL_DIR"/"$tc32_name"-"$tc_v"/bin/"$tc32_name"-
-export CROSS_COMPILE_ARM32
+#CROSS_COMPILE_ARM32+="ccache "
+#CROSS_COMPILE_ARM32+="$KERNEL_DIR"/"$tc32_name"-"$tc_v"/bin/"$tc32_name"-
+#export CROSS_COMPILE_ARM32
 export CC_dir="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin
-export PATH="$CC_dir:$KERNEL_DIR/clang/bin:/usr/lib/ccache:$PATH"
+export CC32_dir="$KERNEL_DIR"/"$tc32_name"-"$tc_v"/bin
+export PATH="$CC_dir:$CC32_dir:$KERNEL_DIR/clang/bin:/usr/lib/ccache:$PATH"
 
 function sync(){
 	SYNC_START=$(date +"%s")
@@ -56,7 +57,7 @@ function build(){
 	cd "$KERNEL_DIR"/kernel
 	export last_tag=$(git log -1 --oneline)
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage > /dev/null
-	script "$KERNEL_DIR"/kernel.log -c 'make O=out vendor/'"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- O=out'
+	script "$KERNEL_DIR"/kernel.log -c 'make O=out vendor/'"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- CROSS_COMPILE32='"$tc32_name"'- O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	export BUILD_DIFF
