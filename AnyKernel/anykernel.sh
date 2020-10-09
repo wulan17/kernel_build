@@ -1,59 +1,64 @@
+# AnyKernel3 Ramdisk Mod Script
+# osm0sis @ xda-developers
+
+## AnyKernel setup
+# begin properties
+properties() { '
+kernel.string=Test kernel by wulan17
+do.devicecheck=0
+do.modules=0
+do.systemless=1
+do.cleanup=1
+do.cleanuponabort=0
+device.name1=rmx2030
+device.name2=
+device.name3=
+device.name4=
+device.name5=
+supported.versions=
+supported.patchlevels=
+'; } # end properties
 
 # shell variables
-block=/dev/block/platform/bootdevice/by-name/boot;
-
-## end setup
+block=/dev/block/bootdevice/by-name/boot;
+is_slot_device=0;
+ramdisk_compression=auto;
 
 
 ## AnyKernel methods (DO NOT CHANGE)
-# set up extracted files and directories
-ramdisk=/tmp/anykernel/ramdisk;
-bin=/tmp/anykernel/tools;
-split_img=/tmp/anykernel/split_img;
-patch=/tmp/anykernel/patch;
-kernel=/tmp/anykernel/zImage;
-
-chmod -R 755 $bin;
-mkdir $split_img;
+# import patching functions/variables - see for reference
+. tools/ak3-core.sh;
 
 
-# dump boot and extract ramdisk
-dump_boot() {
-  dd if=$block of=/tmp/anykernel/boot.img;
-  $bin/unpackbootimg -i /tmp/anykernel/boot.img -o $split_img;
-  if [ $? != 0 ]; then
-    ui_print " "; ui_print "Dumping/unpacking image failed. Aborting...";
-    echo 1 > /tmp/anykernel/exitcode; exit;
-  fi;
-}
+## AnyKernel file attributes
+# set permissions/ownership for included ramdisk files
+set_perm_recursive 0 0 755 644 $ramdisk/*;
+set_perm_recursive 0 0 750 750 $ramdisk/init* $ramdisk/sbin;
 
-# repack ramdisk then build and write image
-write_boot() {
-  cd $split_img;
-  cmdline=`cat *-cmdline`;
-  board=`cat *-board`;
-  base=`cat *-base`;
-  pagesize=`cat *-pagesize`;
-  kerneloff=`cat *-kerneloff`;
-  ramdiskoff=`cat *-ramdiskoff`;
-  tagsoff=`cat *-tagsoff`;
-  if [ -f *-second ]; then
-    second=`ls *-second`;
-    second="--second $split_img/$second";
-    secondoff=`cat *-secondoff`;
-    secondoff="--second_offset $secondoff";
-  fi;
-  $bin/mkbootimg --kernel $kernel --ramdisk /tmp/anykernel/split_img/boot.img-ramdisk.gz $second --cmdline "$cmdline" --board "$board" --base $base --pagesize $pagesize --kernel_offset $kerneloff --ramdisk_offset $ramdiskoff $secondoff --tags_offset $tagsoff --output /tmp/anykernel/boot-new.img;
-  if [ $? != 0 -o `wc -c < /tmp/anykernel/boot-new.img` -gt `wc -c < /tmp/anykernel/boot.img` ]; then
-    ui_print " "; ui_print "Repacking image failed. Aborting...";
-    echo 1 > /tmp/anykernel/exitcode; exit;
-  fi;
-  dd if=/tmp/anykernel/boot-new.img of=$block;
-}
 
+## AnyKernel install
 dump_boot;
 
-write_boot;
+# begin ramdisk changes
 
+# init.rc
+# backup_file init.rc;
+# replace_string init.rc "cpuctl cpu,timer_slack" "mount cgroup none /dev/cpuctl cpu" "mount cgroup none /dev/cpuctl cpu,timer_slack";
+
+# init.tuna.rc
+# backup_file init.tuna.rc;
+# insert_line init.tuna.rc "nodiratime barrier=0" after "mount_all /fstab.tuna" "\tmount ext4 /dev/block/platform/omap/omap_hsmmc.0/by-name/userdata /data remount nosuid nodev noatime nodiratime barrier=0";
+# append_file init.tuna.rc "bootscript" init.tuna;
+
+# fstab.tuna
+# backup_file fstab.tuna;
+# patch_fstab fstab.tuna /system ext4 options "noatime,barrier=1" "noatime,nodiratime,barrier=0";
+# patch_fstab fstab.tuna /cache ext4 options "barrier=1" "barrier=0,nomblk_io_submit";
+# patch_fstab fstab.tuna /data ext4 options "data=ordered" "nomblk_io_submit,data=writeback";
+# append_file fstab.tuna "usbdisk" fstab;
+
+# end ramdisk changes
+
+write_boot;
 ## end install
 

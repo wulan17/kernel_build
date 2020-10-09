@@ -3,7 +3,7 @@ sudo apt update && sudo apt install ccache wget bc build-essential make autoconf
 # Export
 export TELEGRAM_TOKEN
 export TELEGRAM_CHAT
-export sticker="CAACAgUAAxkBAAIL2l6XZzZMONmyzN78ZXKauBmF7B59AAIIAQACai2MM14xGHW1mrNAGAQ" 
+export sticker="CAACAgUAAxkBAAIL2l6XZzZMONmyzN78ZXKauBmF7B59AAIIAQACai2MM14xGHW1mrNAGAQ"
 export ARCH="arm64"
 export SUBARCH="arm64"
 export KBUILD_BUILD_USER="wulan17"
@@ -18,11 +18,13 @@ export tc32_repo="https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git"
 export tc32_name="arm-linux-gnueabihf"
 export tc_branch="master"
 export tc_v="7.5"
-export clang_url="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-10.0.0_r47/clang-r353983c.tar.gz"
+export clang_repo="https://github.com/NusantaraDevs/clang"
+export clang_branch="dev/12.0"
 export clang_triple="aarch64-linux-gnu-"
 export zip_name="kernel-""$device""-Q-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
 export KERNEL_DIR=$(pwd)
-export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/Image.gz-dtb
+export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/Image.gz
+export DTBO="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/dtbo.img
 export ZIP_DIR="$KERNEL_DIR"/AnyKernel
 export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
@@ -43,10 +45,7 @@ function sync(){
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc32_repo" --depth 1 "$tc32_name"-"$tc_v" > /dev/null
-	wget -q "$clang_url"
-	mkdir -p clang
-	cd clang && tar -xzf ../clang-4691093.tar.gz
-	cd "$KERNEL_DIR" && rm clang-4691093.tar.gz
+	git clone "$clang_repo" -b "clang_branch" --depth=1 clang
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
@@ -72,7 +71,7 @@ function success(){
 	Commit : ""$last_tag""
 	Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 	Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
-	
+
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F document=@"$KERNEL_DIR"/kernel.log https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument > /dev/null
 	exit 0
 }
@@ -83,6 +82,7 @@ function failed(){
 function check_build(){
 	if [ -e "$KERN_IMG" ]; then
 		cp "$KERN_IMG" "$ZIP_DIR"/Image.gz
+		cp "$DTBO" "$ZIP_DIR"/
 		cd "$ZIP_DIR"
 		zip -r "$zip_name".zip ./*
 		success
