@@ -28,7 +28,7 @@ export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
 export THREAD="-j$CORES"
 #CROSS_COMPILE+="ccache "
-CROSS_COMPILE="$KERNEL_DIR"/"$tc2_name"-"$tc_v"/bin/"$tc2_name"-
+CROSS_COMPILE="$KERNEL_DIR"/"$tc32_name"-"$tc_v"/bin/"$tc32_name"-
 export CROSS_COMPILE
 #CROSS_COMPILE_ARM32+="ccache "
 #CROSS_COMPILE_ARM32+="$KERNEL_DIR"/"$tc32_name"-"$tc_v"/bin/"$tc32_name"-
@@ -62,7 +62,7 @@ function build(){
 	#mkdir drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware
 	#touch drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware/fw_helitai_v0e.i
 	#touch drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware/fw_sample.i
-	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc32_name"'- O=out'
+	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	export BUILD_DIFF
