@@ -47,6 +47,8 @@ function sync(){
 	mkdir -p clang
 	cd clang && tar -xzf ../clang-4691093.tar.gz
 	cd "$KERNEL_DIR" && rm clang-4691093.tar.gz
+	rm "$KERNEL_DIR"/kernel/kernel/module.c
+	cp module.c "$KERNEL_DIR"/kernel/kernel/
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
