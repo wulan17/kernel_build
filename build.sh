@@ -43,10 +43,10 @@ function sync(){
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
 	#cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc32_repo" --depth 1 "$tc32_name"-"$tc_v" > /dev/null
-	#wget -q "$clang_url"
-	#mkdir -p clang
-	#cd clang && tar -xzf ../clang-4691093.tar.gz
-	#cd "$KERNEL_DIR" && rm clang-4691093.tar.gz
+	wget -q "$clang_url"
+	mkdir -p clang
+	cd clang && tar -xzf ../clang-4691093.tar.gz
+	cd "$KERNEL_DIR" && rm clang-4691093.tar.gz
 	chmod -R a+x "$KERNEL_DIR"/"$tc32_name"-"$tc32_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
@@ -62,8 +62,7 @@ function build(){
 	#mkdir drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware
 	#touch drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware/fw_helitai_v0e.i
 	#touch drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware/fw_sample.i
-	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' O=out'
-#make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- CROSS_COMPILE_ARM32='"$tc32_name"'- O=out'
+	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc32_name"'- O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	export BUILD_DIFF
