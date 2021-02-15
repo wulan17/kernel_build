@@ -9,7 +9,7 @@ export SUBARCH="arm64"
 export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
 export branch="10"
-export device="dandelion"
+export device="angelica"
 export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/wulan17/android_kernel_xiaomi_mt6765g.git"
 export tc_repo="https://github.com/wulan17/linaro_aarch64-linux-gnu-7.5.git"
@@ -47,8 +47,6 @@ function sync(){
 	mkdir -p clang
 	cd clang && tar -xzf ../clang-4691093.tar.gz
 	cd "$KERNEL_DIR" && rm clang-4691093.tar.gz
-	rm "$KERNEL_DIR"/kernel/kernel/module.c
-	cp module.c "$KERNEL_DIR"/kernel/kernel/
 	chmod -R a+x "$KERNEL_DIR"/"$tc_name"-"$tc_v"
 	SYNC_END=$(date +"%s")
 	SYNC_DIFF=$((SYNC_END - SYNC_START))
@@ -59,11 +57,6 @@ function build(){
 	cd "$KERNEL_DIR"/kernel
 	export last_tag=$(git log -1 --oneline)
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage > /dev/null
-	#sed -i 's,CONFIG_TOUCHSCREEN_FTS=y,# CONFIG_TOUCHSCREEN_FTS is not set,g' arch/arm64/configs/dandelion_defconfig
-	mkdir drivers/input/touchscreen/mediatek/ft8006s_spi/include
-	mkdir drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware
-	touch drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware/fw_helitai_v0e.i
-	touch drivers/input/touchscreen/mediatek/ft8006s_spi/include/firmware/fw_sample.i
 	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- CROSS_COMPILE_ARM32='"$tc32_name"'- O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
