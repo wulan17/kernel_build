@@ -10,7 +10,6 @@ export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
 export branch="11"
 export device="selene"
-export LOCALVERSION="-wulan17"
 export kernel_repo="https://github.com/kbt69/android_kernel_xiaomi_selene.git"
 export tc_repo="https://github.com/wulan17/linaro_aarch64-linux-gnu-7.5.git"
 export tc_name="aarch64-linux-gnu"
@@ -70,7 +69,7 @@ function success(){
 	Branch : ""$branch""
 	Host : ""$KBUILD_BUILD_HOST""
 	Commit : ""$last_tag""
-	Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
+	Compiler : ""$(clang --version | head -n 1)""
 	Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
 
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F document=@"$KERNEL_DIR"/kernel.log https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument > /dev/null
