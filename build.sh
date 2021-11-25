@@ -8,7 +8,7 @@ export ARCH="arm64"
 export SUBARCH="arm64"
 export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
-export branch="11"
+export branch="11-upstream"
 export device="selene"
 export kernel_repo="https://github.com/kbt69/android_kernel_xiaomi_selene.git"
 export tc_repo="https://github.com/wulan17/linaro_aarch64-linux-gnu-7.5.git"
@@ -19,7 +19,8 @@ export tc_branch="master"
 export tc_v="7.5"
 export clang_url="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-11.0.0_r46/clang-r383902b.tar.gz"
 export clang_triple="aarch64-linux-gnu-"
-export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
+export random=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13)
+export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)"-""$random"
 export KERNEL_DIR=$(pwd)
 export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/Image.gz-dtb
 export ZIP_DIR="$KERNEL_DIR"/AnyKernel
