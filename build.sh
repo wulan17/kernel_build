@@ -2,16 +2,16 @@
 sudo apt update && sudo apt install ccache wget bc build-essential make autoconf automake
 # Export
 export TELEGRAM_TOKEN
-export TELEGRAM_CHAT
+export TELEGRAM_CHAT="-1001679439421"
 export sticker="CAACAgUAAxkBAAIL2l6XZzZMONmyzN78ZXKauBmF7B59AAIIAQACai2MM14xGHW1mrNAGAQ" 
 export ARCH="arm64"
 export SUBARCH="arm64"
 export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
-export branch="10"
+export branch="10-test"
 export device="angelica"
-export LOCALVERSION="-wulan17"
-export kernel_repo="https://github.com/wulan17/android_kernel_xiaomi_mt6765g.git"
+export LOCALVERSION="-TsukiNoHikari"
+export kernel_repo="https://github.com/kbt69/android_kernel_xiaomi_mt6765g.git"
 export tc_repo="https://github.com/wulan17/linaro_aarch64-linux-gnu-7.5.git"
 export tc_name="aarch64-linux-gnu"
 export tc32_repo="https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git"
@@ -39,7 +39,6 @@ export PATH="$CC_dir:$CC32_dir:$KERNEL_DIR/clang/bin:/usr/lib/ccache:$PATH"
 
 function sync(){
 	SYNC_START=$(date +"%s")
-	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Sync Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$branch" "$kernel_repo" --depth 1 kernel > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc_repo" --depth 1 "$tc_name"-"$tc_v" > /dev/null
 	cd "$KERNEL_DIR" && git clone --quiet "$THREAD" -b "$tc_branch" "$tc32_repo" --depth 1 "$tc32_name"-"$tc_v" > /dev/null
@@ -54,11 +53,9 @@ function sync(){
 }
 function build(){
 	BUILD_START=$(date +"%s")
-	cp "$KERNEL_DIR"/angelica-stock_defconfig d "$KERNEL_DIR"/kernel/arch/arm64/configs/
 	cd "$KERNEL_DIR"/kernel
 	export last_tag=$(git log -1 --oneline)
-	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F "parse_mode=html" -F text="Build Started" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage > /dev/null
-	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'-stock_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- CROSS_COMPILE_ARM32='"$tc32_name"'- O=out'
+	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- CROSS_COMPILE_ARM32='"$tc32_name"'- O=out'
 	BUILD_END=$(date +"%s")
 	BUILD_DIFF=$((BUILD_END - BUILD_START))
 	export BUILD_DIFF
@@ -73,7 +70,7 @@ function success(){
 	Commit : ""$last_tag""
 	Compiler : ""$(${CROSS_COMPILE}gcc --version | head -n 1)""
 	Date : ""$(env TZ=Asia/Jakarta date)""" https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument
-	
+
 	curl -s -v -F "chat_id=$TELEGRAM_CHAT" -F document=@"$KERNEL_DIR"/kernel.log https://api.telegram.org/bot$TELEGRAM_TOKEN/sendDocument > /dev/null
 	exit 0
 }
@@ -92,7 +89,6 @@ function check_build(){
 	fi
 }
 function main(){
-	curl -s -F "chat_id=$TELEGRAM_CHAT" -F "sticker=$sticker" https://api.telegram.org/bot"$TELEGRAM_TOKEN"/sendSticker > /dev/null
 	sync
 	build
 	check_build
