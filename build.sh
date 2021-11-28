@@ -54,6 +54,7 @@ function sync(){
 function build(){
 	BUILD_START=$(date +"%s")
 	cd "$KERNEL_DIR"/kernel
+	git reset --hard 8f04fdf3268654bc40620e8cf4bb794e778004bc
 	export last_tag=$(git log -1 --oneline)
 	script "$KERNEL_DIR"/kernel.log -c 'make O=out '"$device"'_defconfig '"$THREAD"' && make '"$THREAD"' CC=clang CLANG_TRIPLE='"$clang_triple"' CROSS_COMPILE='"$tc_name"'- CROSS_COMPILE_ARM32='"$tc32_name"'- O=out'
 	BUILD_END=$(date +"%s")
