@@ -14,5 +14,6 @@ jobs:
         ./build.sh
       shell: bash
       env:
-        CI_SECRET: ${{ secrets.CI_SECRET }}
+        TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
 

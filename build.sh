@@ -1,31 +1,30 @@
 #!/bin/bash
 sudo apt update && sudo apt install ccache wget bc build-essential make autoconf automake
 # Export
-export CI_SECRET
+export TELEGRAM_CHAT
+export TELEGRAM_TOKEN
 export ARCH="arm"
 export SUBARCH="arm"
 export KBUILD_BUILD_USER="wulan17"
 export KBUILD_BUILD_HOST="Github"
-export branch="dev/10-exfat"
+export branch="experimental/ero"
 export device="certus"
-#export LOCALVERSION="-wulan17"
-export kernel_repo="https://github.com/kbt69/android_kernel_xiaomi_mt6765.git"
+export kernel_repo="https://github.com/Mayuri-Chan/android_kernel_xiaomi_mt6765.git"
 export tc_repo="https://github.com/wulan17/linaro_arm-linux-gnueabihf-7.5.git"
 export tc_name="arm-linux-gnueabihf"
 export tc_branch="master"
 export tc_v="7.5"
-export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)""
+export zip_name="kernel-""$device""-"$(env TZ='Asia/Jakarta' date +%Y%m%d)"-""$ARCH"
 export KERNEL_DIR=$(pwd)
 export KERN_IMG="$KERNEL_DIR"/kernel/out/arch/"$ARCH"/boot/zImage-dtb
 export ZIP_DIR="$KERNEL_DIR"/AnyKernel
 export CONFIG_DIR="$KERNEL_DIR"/kernel/arch/"$ARCH"/configs
 export CORES=$(grep -c ^processor /proc/cpuinfo)
 export THREAD="-j$CORES"
-#CROSS_COMPILE+="ccache "
 CROSS_COMPILE="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin/"$tc_name"-
 export CROSS_COMPILE
 export CC_dir="$KERNEL_DIR"/"$tc_name"-"$tc_v"/bin
-export PATH="$CC_dir:/usr/lib/ccache:$PATH"
+export PATH="$CC_dir:$PATH"
 
 function sync(){
 	SYNC_START=$(date +"%s")
@@ -45,7 +44,7 @@ function build(){
 	export BUILD_DIFF
 }
 function success(){
-	curl -X POST -F secret="$CI_SECRET" -F document=@"$ZIP_DIR"/"$zip_name".zip http://ci.wulan17.my.id/gd
+	curl -X POST -F chat_id="$TELEGRAM_CHAT" -F document=@"$ZIP_DIR"/"$zip_name".zip https://api.telegram.org/bot"$TELEGRAM_TOKEN"/sendDocument
 	exit 0
 }
 function check_build(){
