@@ -6,13 +6,28 @@ jobs:
   build:
     name: My Job;
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v1
-    - name: Build Kernel
+    - name: Sync Source
       run: |
-        chmod a+x ./build.sh
-        ./build.sh
+        ./sync.sh
+      shell: bash
+
+    - uses: actions/checkout@v1
+    - name: Build arm kernel
+      run: |
+        ./build32.sh
       shell: bash
       env:
-        CI_SECRET: ${{ secrets.CI_SECRET }}
+        TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
 
+    - uses: actions/checkout@v1
+    - name: Build arm64 kernel
+      run: |
+        ./build64.sh
+      shell: bash
+      env:
+        TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
